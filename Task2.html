@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch Users</title>
+
+    <link rel="stylesheet" href="Task2.css">
+</head>
+<body>
+
+    <h1>User Details</h1>
+
+    <button id="fetchBtn">Load Users</button>
+
+    <p id="status"></p>
+
+    <div id="users"></div>
+
+    <script>
+        const btn = document.getElementById("fetchBtn");
+        const statusText = document.getElementById("status");
+        const usersDiv = document.getElementById("users");
+
+        btn.addEventListener("click", () => {
+
+            statusText.innerText = "Loading...";
+            usersDiv.innerHTML = "";
+
+            setTimeout(() => {
+
+                fetch("https://jsonplaceholder.typicode.com/users")
+                    .then(response => response.json())
+                    .then(data => {
+
+                        data.forEach(user => {
+
+                            usersDiv.innerHTML += `
+                                <div class="user-card">
+                                    <h3>${user.name}</h3>
+                                    <p><strong>Email:</strong> ${user.email}</p>
+                                    <p><strong>Phone:</strong> ${user.phone}</p>
+                                </div>
+                            `;
+                        });
+
+                        statusText.innerText = "Loaded successfully";
+                    })
+                    .catch(error => {
+                        statusText.innerText = "Error loading data";
+                        console.log(error);
+                    });
+
+            }, 2000);
+
+        });
+    </script>
+
+</body>
+</html>
