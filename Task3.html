@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Manager</title>
+    <link rel="stylesheet" href="Task3.css">
+</head>
+<body>
+
+    <h1>Message Manager</h1>
+
+    <input type="text" id="messageInput" placeholder="Type your message here...">
+
+    <button id="addBtn">Add Message</button>
+    <button id="clearBtn">Clear All Messages</button>
+
+    <p id="count">Character Count : 0</p>
+
+    <h2>Messages</h2>
+
+    <p id="total">Total Messages : 0</p>
+
+    <div id="messageContainer">
+        <p>No Messages Available</p>
+    </div>
+
+    <p id="status"></p>
+
+<script>
+
+let messages = [];
+
+const input = document.getElementById("messageInput");
+const addBtn = document.getElementById("addBtn");
+const clearBtn = document.getElementById("clearBtn");
+const count = document.getElementById("count");
+const total = document.getElementById("total");
+const status = document.getElementById("status");
+const container = document.getElementById("messageContainer");
+
+
+// Character Count
+input.addEventListener("input", function () {
+    count.textContent = "Character Count : " + input.value.length;
+});
+
+
+// Display Messages
+function displayMessages() {
+
+    container.innerHTML = "";
+
+    if(messages.length === 0){
+        container.innerHTML = "<p>No Messages Available</p>";
+        total.textContent = "Total Messages : 0";
+        return;
+    }
+
+    total.textContent = "Total Messages : " + messages.length;
+
+    messages.forEach(function(message, index){
+
+        let p = document.createElement("p");
+        p.textContent = (index + 1) + ". " + message;
+
+        container.appendChild(p);
+
+    });
+
+}
+
+
+// Add Message
+addBtn.addEventListener("click", function(){
+
+    let message = input.value.trim();
+
+    let promise = new Promise(function(resolve, reject){
+
+        if(message.length >= 3){
+            resolve(message);
+        }
+        else{
+            reject("❌ Message must contain at least 3 characters");
+        }
+
+    });
+
+    promise.then(function(msg){
+
+        messages.push(msg);
+
+        displayMessages();
+
+        status.textContent = "✅ Message Added Successfully";
+
+        input.value = "";
+        count.textContent = "Character Count : 0";
+
+        // Remove after 10 seconds
+        setTimeout(function(){
+
+            let index = messages.indexOf(msg);
+
+            if(index !== -1){
+
+                messages.splice(index,1);
+
+                displayMessages();
+
+                status.textContent = "⌛ Message Expired";
+
+            }
+
+        },10000);
+
+    })
+
+    .catch(function(error){
+
+        status.textContent = error;
+
+    });
+
+});
+
+
+// Clear All Messages
+clearBtn.addEventListener("click", function(){
+
+    messages = [];
+
+    displayMessages();
+
+    status.textContent = "🗑️ All Messages Cleared";
+
+});
+
+</script>
+
+</body>
+</html>
